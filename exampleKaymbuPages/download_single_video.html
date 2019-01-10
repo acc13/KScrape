@@ -1,0 +1,50 @@
+<!DOCTYPE html><html><head><title>Video</title><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="robots" content="noindex, nofollow"><link rel="shortcut icon" href="https://d2hi0kftpcoddq.cloudfront.net/favicon.ico" type="image/x-icon"><link rel="icon" href="https://d2hi0kftpcoddq.cloudfront.net/favicon.ico" type="image/x-icon"><link rel="apple-touch-icon" href="https://d2hi0kftpcoddq.cloudfront.net/apple-touch-icon.png"><link rel="apple-touch-icon" sizes="72x72" href="https://d2hi0kftpcoddq.cloudfront.net/apple-touch-icon-72.png"><link rel="apple-touch-icon" sizes="114x114" href="https://d2hi0kftpcoddq.cloudfront.net/apple-touch-icon-114.png"><link rel="apple-touch-icon" sizes="144x144" href="https://d2hi0kftpcoddq.cloudfront.net/apple-touch-icon-144.png"><link rel="stylesheet" href="https://d2hi0kftpcoddq.cloudfront.net/stylesheets/style.css?v=v1224"><link rel="stylesheet" href="https://d2hi0kftpcoddq.cloudfront.net/stylesheets/site/site.css?v=v1224"><!-- NOT HEADLESS--><link rel="stylesheet" href="https://d2hi0kftpcoddq.cloudfront.net/javascripts/libs/sidr/jquery.sidr.dark.css?v=v1224"><link rel="stylesheet" href="https://vjs.zencdn.net/4.2/video-js.css"><link rel="stylesheet" href="https://d2hi0kftpcoddq.cloudfront.net/stylesheets/moments/video.css?v=v1224"><!-- Reskin!--><link rel="stylesheet" href="https://d2hi0kftpcoddq.cloudfront.net/stylesheets/site/reskin.css?v=v1224"><script type="text/javascript" src="https://d2hi0kftpcoddq.cloudfront.net/javascripts/utils/jquery-1.9.1.min.js?v=v1224"></script><script>var KAYMBU = new function() {
+
+  var self = this;
+  
+  this.user = null;
+  
+  this.access = {
+    account: null,
+    accountPlan: null,
+    hasAccountLimits: false,
+    isAccountLimitReached: function(num, key) {
+      if (!self.access.hasAccountLimits) {
+        return false;
+      }
+      
+      if (self.access.accountPlan.limits[key] === undefined) {
+        return true;
+      }
+      
+      var maxAllowed = this.accountPlan.limits[key];
+      
+      return num >= maxAllowed;
+    },
+  }
+  
+}();
+</script><script>window.headless = false
+
+window.config = {
+  enviroment: "production",
+  headless: false
+};
+
+window.nativeCall = function(callURL) {
+  if (typeof window.headless == 'undefined' || !window.headless) return;
+  var iframe = document.createElement("iframe");
+  iframe.setAttribute("src", callURL);
+  document.documentElement.appendChild(iframe);
+  iframe.parentNode.removeChild(iframe);
+  iframe = null;
+};
+</script><script type="text/javascript" src="https://d2hi0kftpcoddq.cloudfront.net/javascripts/menu.js?v=v1224"></script><script type="text/javascript" src="https://d2hi0kftpcoddq.cloudfront.net/javascripts/libs/sidr/jquery.sidr.min.js?v=v1224"></script><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-41208993-1', 'kaymbu.com');
+ga('send', 'pageview');</script><script type="text/javascript" src="https://vjs.zencdn.net/4.2/video.js"></script><script type="text/javascript" src="https://d2hi0kftpcoddq.cloudfront.net/javascripts/moments/video.js?v=v1224"></script><script>var _poster = "https://d2k9f6tk478nyp.cloudfront.net/moments/522d1efbb958810200000016/videos/video-still-5bad73f82719b9001abc0d6a.png";
+var _video = "https://d2k9f6tk478nyp.cloudfront.net/moments/522d1efbb958810200000016/videos/low-5bad73f82719b9001abc0d6a.mp4";
+videojs.options.flash.swf = "https://vjs.zencdn.net/4.2/video-js.swf"
+</script></head><body><div class="top-nav"><div class="container"><h3 class="title">Video</h3><div class="logo"></div><div class="filter"></div></div></div><br><div class="video-container"></div><a href="http://export.kaymbu.com/download/moments/?5bad73f82719b9001abc0d6a" class="download-btn">Download</a><div id="sidr"><div class="menu-container"><ul><li class="menu-item moments"><a href="/app/moments"><div class="icon"></div><span>Moments</span></a></li><li class="menu-item storyboards"><a href="/storyboards"><div class="icon"></div><span>Storyboards</span></a></li><li class="menu-item messaging"><a href="/app/messaging"><div class="icon"></div><span>Messaging</span></a></li><li class="divider"><li class="menu-item manage"><a href="/app/manage/classroom/null"><div class="icon"></div><span>Roster</span></a></li><li class="menu-item sent"><a href="/app/sent"><div class="icon manage"></div><span>Sent Messages</span></a></li><li class="menu-item settings"><a href="/app/settings/classroom/null"><div class="icon email-digest"></div><span>Email Settings</span></a></li></li><li class="divider"></li><li class="menu-item help"><a href="http://help.kaymbu.com" target="_blank"><div class="icon help"></div><span>Help</span></a></li><li class="menu-item logout"><a href="/admin/account/logout"><div style="background-repeat: no-repeat; background-size: 15px; background-position: 8px" class="icon logout"></div><span>Logout</span></a></li></ul></div></div></body></html>

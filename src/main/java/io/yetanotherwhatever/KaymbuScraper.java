@@ -44,6 +44,7 @@ public class KaymbuScraper {
     protected List<String> scrapeVidIds(String bod)
     {
         List<String> ids = new ArrayList();
+        //video thumbnails are displayed by a .png with "still" prefix
         Pattern p = Pattern.compile("still-([a-zA-Z0-9]*).png");
         Matcher m = p.matcher(bod);
 
@@ -61,37 +62,5 @@ public class KaymbuScraper {
         String raw = doc.outerHtml();
 
         return scrapeVidIds(raw);
-    }
-
-    private static final String DOWNLOAD_URL = "http://export.kaymbu.com/download/moments?";
-    private static final String ARG_DELIM = "&";
-
-    public List<String> buildDownloadUrlsFromHtml(String pageBody) {
-        Document doc = Jsoup.parse(pageBody);
-
-        return buildDownloadUrlsFromDoc(doc);
-    }
-
-    public List<String> buildDownloadUrlsFromDoc(Document doc)
-    {
-        List<String> ids = scrapePicIds(doc);
-
-        return ids.stream()
-                .map(i -> buildDownloadUrlFor(i))
-                .collect(Collectors.toList());
-
-    }
-
-    public String buildDownloadUrlForPics(List<String> ids)
-    {
-        return DOWNLOAD_URL + join(ARG_DELIM, ids)
-                + ARG_DELIM;    //their dumb website always adds a trailing one
-    }
-
-    public String buildDownloadUrlFor(String id)
-    {
-        List<String> idInList = new ArrayList<>();
-        idInList.add(id);
-        return buildDownloadUrlForPics(idInList);
     }
 }

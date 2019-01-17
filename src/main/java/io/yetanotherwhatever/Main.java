@@ -5,9 +5,9 @@ import org.apache.logging.log4j.Logger;
 /**
  * Created by achang on 1/7/2019.
  */
-public class GetMyPics {
+public class Main {
 
-    private static final Logger logger = org.apache.logging.log4j.LogManager.getLogger(GetMyPics.class);
+    private static final Logger logger = org.apache.logging.log4j.LogManager.getLogger(Main.class);
 
     public static void main(String[] args)
     {
@@ -16,16 +16,18 @@ public class GetMyPics {
         SharedMomentsEmailProcessor processor = new SharedMomentsEmailProcessor();
 
         //just testing
-        //processor.setDryRunOnly(false);
+        //no file download
+        processor.setDryRunOnly(true);
 
         finder.setEmailProcesser(processor);
         //just testing
+        //max message results
         //finder.setMaxThreadResults(1);
-        finder.findAndProcessEmails("from:(@inbox.kaymbu.com) Shared Moments");
+        finder.findAndProcessEmails("from:(@inbox.kaymbu.com) Shared Moments is:unread");
 
         logger.debug(processor.getEmailsSuccessfullyProcessed() + " emails successfully processed.");
-        logger.debug(processor.getImagesFound() + " images found.");
-        logger.debug(processor.getVideosFound() + " videos found.");
+        logger.debug(processor.getTotalImagesFound() + " images found.");
+        logger.debug(processor.getTotalVideosFound() + " videos found.");
         logger.debug(processor.getEmailsFailedProcessing() + " emails failed.");
     }
 }

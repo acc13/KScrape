@@ -116,10 +116,10 @@ public class GmailFinder implements IEmailFinder{
             return 0;
         }
 
-        threads.stream().forEach(x -> {
+        threads.stream().forEach(thread -> {
 
             try {
-                List<Message> messages = getThreadMessages(x.getId());
+                List<Message> messages = getThreadMessages(thread.getId());
 
                 messages.stream().forEach(m -> {
                     Email e = new Email(m);
@@ -132,9 +132,16 @@ public class GmailFinder implements IEmailFinder{
                 e.printStackTrace();
             }
 
+
         });
 
         return emails.size();
+    }
+
+    private boolean removeUnreadTag(Thread thread)
+    {
+        //TODO
+        return false;
     }
 
     @Override

@@ -36,32 +36,6 @@ public class KaymbuScraperTest {
     }
 
     @Test
-    public void buildDownloadLink_multiImgPage_works()
-    {
-        String expected = "http://export.kaymbu.com/download/moments?5c2e5adc4d83c1001b4810a3&5c2e5adcd22c8c001515b2f4&5c2e5add4e851b008a432a1c&5c2e5add941474008f0e4029&5c2e5ade4e851b008a432a1d&5c2e5ade97e6f3009586be8b&5c2e5adfbda7f201007b0f9f&5c2e5adff3af1d00bd2358ad&";
-
-        KaymbuScraper scraper = new KaymbuScraper();
-
-        List<String> urls = scraper.buildDownloadUrlsFromHtml(TestKaymbuDownloadPages.MULTI_IMG_PAGE);
-
-        assertThat(urls.size(), is(equalTo(8)));
-        assertThat(urls, hasItems(expected));
-    }
-
-    @Test
-    public void buildDownloadLink_singleImgPage_works()
-    {
-        String expected = "http://export.kaymbu.com/download/moments?5c2cfeb872590a001b53c6d1&";
-
-        KaymbuScraper scraper = new KaymbuScraper();
-
-        List<String> urls = scraper.buildDownloadUrlsFromHtml(TestKaymbuDownloadPages.SINGLE_IMG_PAGE);
-
-        assertThat(urls.size(), is(equalTo(1)));
-        assertThat(urls.get(0), is(equalTo(expected)));
-    }
-
-    @Test
     public void scrapeVidIds_vidPage_succeeds()
     {
        String expectedId = "5bad73f82719b9001abc0d6a";

@@ -1,8 +1,6 @@
 package io.yetanotherwhatever;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.google.api.services.gmail.model.Message;
 import com.google.api.services.gmail.model.MessagePart;
@@ -22,6 +20,8 @@ public class Email {
     private String from;
     private String to;
     private Map<String, String> headers;
+
+    private Calendar creationDate = new GregorianCalendar();
 
     private String id;
 
@@ -64,6 +64,16 @@ public class Email {
         this.body = new String(pl.getBody().decodeData());
 
         this.id = m.getId();
+
+        this.creationDate.setTimeInMillis(m.getInternalDate());
+    }
+
+    public Calendar getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Calendar c) {
+        this.creationDate = c;
     }
 
     public String getId() {

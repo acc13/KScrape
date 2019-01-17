@@ -7,12 +7,14 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import static java.lang.String.join;
+import static java.util.Calendar.DAY_OF_MONTH;
+import static java.util.Calendar.MONTH;
+import static java.util.Calendar.YEAR;
 
 
 /**
@@ -28,15 +30,15 @@ public class SharedMomentsEmailProcessor implements IEmailProcesser {
     private boolean dryRunOnly = false;
     private int successEmails = 0;
     private int failedEmails = 0;
-    private int imagesFound = 0;
-    private int videosFound = 0;
+    private int totalImagesFound = 0;
+    private int totalVideosFound = 0;
 
     //emails w/ multiple photos contain a "Download All" button
     //comprised of img tag surrounded by an anchor w/ link out to Kaymbu website
     protected String findDownloadAllLink(Email email)
     {
         String body = email.getBody();
-        Document doc = buildDoc(body);
+        Document doc = Jsoup.parse(body);
 
         Elements els = doc.getElementsByAttributeValue("alt", "Download All");
 
@@ -76,51 +78,34 @@ public class SharedMomentsEmailProcessor implements IEmailProcesser {
         return href.orElse(null);
     }
 
-    private static Document buildDoc(String body)
-    {
-        Document doc = Jsoup.parse(body);
-
-        if (doc == null)
-        {
-            logger.error("Unable to parse document");
-        }
-
-        return doc;
-    }
-
-    protected static String base64UrlDecode(String body)
-    {
-        byte[] bytes = Base64.getUrlDecoder().decode(body.getBytes());
-
-        String decoded = new String(bytes);
-
-        return decoded;
-    }
-
     @Override
     public boolean processEmail(Email email) {
 
         String href = findDownloadAllLink(email);
 
-        int found = 0;
+        int imagesAndVideosFound = 0;
         int vidsFound = 0;
 
         try {
-            Document doc = Jsoup.connect(href)
+            Document downloadPage = Jsoup.connect(href)
                     .userAgent("Mozilla/5.0 (Windows NT 10.0; …) Gecko/20100101 Firefox/64.0")
                     .timeout(JSOUP_TIMEOUT)
                     .get();
 
-            found = getPics(doc);
-            vidsFound = getVids(doc);
-            found += vidsFound;
+            imagesAndVideosFound = downloadPicsFoundInDoc(downloadPage, email);
+            totalImagesFound += imagesAndVideosFound;
+
+            vidsFound = downloadVideosFoundInDoc(downloadPage, email);
+            totalVideosFound += vidsFound;
+
+            imagesAndVideosFound += vidsFound;
         }
         catch(IOException e)
         {
             e.printStackTrace();
         }
 
-        if(found <= 0)
+        if(imagesAndVideosFound <= 0)
         {
             logger.error("No images or videos found in email id: " + email.getId() + ", download all link: " + href);
             failedEmails++;
@@ -130,38 +115,46 @@ public class SharedMomentsEmailProcessor implements IEmailProcesser {
             successEmails++;
         }
 
-        return found > 0;
+        return imagesAndVideosFound > 0;
     }
 
-    private int getVids(Document doc)
+    private int downloadVideosFoundInDoc(Document doc, Email email)
     {
         KaymbuScraper scraper = new KaymbuScraper();
         List<String> ids = scraper.scrapeVidIds(doc);
 
-        videosFound += ids.size();
-
-        buildDownloadUrlForEach(scraper, ids, VID_EXT);
+        downloadResources(ids, VID_EXT, email);
 
         return ids.size();
     }
 
-    private void buildDownloadUrlForEach(KaymbuScraper scraper, List<String> ids, String extension) {
+    private void downloadResources(List<String> ids, String extension, Email email) {
         FileGetter saver = new FileGetter();
         ids.stream().forEach(id -> {
 
-            String destFileName = id + extension;
+            String destFileName = buildDestinationFileName(id, extension, email);
 
             if (!dryRunOnly)
             {
-                saver.saveResource(scraper.buildDownloadUrlFor(id), destFileName, id);
+                saver.saveResource(buildDownloadUrlForId(id), destFileName, id);
             }
 
             logger.debug("File saved: " + DEST_DIR + "\\" + destFileName);
         });
     }
 
+    protected String buildDestinationFileName(String resourceId, String extension, Email email)
+    {
+        Calendar c = email.getCreationDate();
+        Date date = c.getTime();
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyyMMdd");
+        String ts = format1.format(date);
+
+        return ts + "_" + resourceId + extension;
+    }
+
     private final int JSOUP_TIMEOUT = 5000;
-    private int getPics(Document doc)
+    private int downloadPicsFoundInDoc(Document doc, Email email)
     {
         List<String> ids = null;
 
@@ -173,9 +166,7 @@ public class SharedMomentsEmailProcessor implements IEmailProcesser {
             return 0;
         }
 
-        imagesFound += ids.size();
-
-        buildDownloadUrlForEach(scraper, ids, IMG_EXT);
+        downloadResources(ids, IMG_EXT, email);
 
         return ids.size();
     }
@@ -188,6 +179,22 @@ public class SharedMomentsEmailProcessor implements IEmailProcesser {
         return this;
     }
 
+    private static final String DOWNLOAD_URL = "http://export.kaymbu.com/download/moments?";
+    private static final String ARG_DELIM = "&";
+
+    public String buildDownloadUrlForIds(List<String> ids)
+    {
+        return DOWNLOAD_URL + join(ARG_DELIM, ids)
+                + ARG_DELIM;    //their dumb website always adds a trailing one
+    }
+
+    public String buildDownloadUrlForId(String id)
+    {
+        List<String> idInList = new ArrayList<>();
+        idInList.add(id);
+        return buildDownloadUrlForIds(idInList);
+    }
+
     public int getEmailsSuccessfullyProcessed()
     {
         return this.successEmails;
@@ -198,13 +205,14 @@ public class SharedMomentsEmailProcessor implements IEmailProcesser {
         return this.failedEmails;
     }
 
-    public int getImagesFound()
+    public int getTotalImagesFound()
     {
-        return this.imagesFound;
+        return this.totalImagesFound;
     }
 
-    public int getVideosFound()
+    public int getTotalVideosFound()
     {
-        return this.videosFound;
+        return this.totalVideosFound;
     }
+
 }
